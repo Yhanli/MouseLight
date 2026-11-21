@@ -58,8 +58,38 @@ if ($PublishProfile -ne 'PublishNewMod' -and -not $modId) {
     exit 1
 }
 
-Write-Host "Publishing '$($config.Publish.DisplayName.Value)' version $($config.Publish.ModVersion.Value) with $PublishProfile (ModId: $modId)"
+$version = $config.Publish.ModVersion.Value
+$tag = "v$version"
+$uploadsCode = $PublishProfile -ne 'UpdatePublishedConfiguration'
+
+if ($uploadsCode) {
+    # What gets published must match a commit, so the release tag points at the exact code players get.
+    if (git -C $repo status --porcelain) {
+        Write-Error 'There are uncommitted changes. Commit them first so the published version matches a commit.'
+        exit 1
+    }
+    git -C $repo fetch --quiet --tags origin 2>$null
+    if (git -C $repo tag --list $tag) {
+        Write-Error "Version $version is already released (tag $tag exists). Bump <ModVersion> and write a <ChangeLog> first."
+        exit 1
+    }
+}
+
+Write-Host "Publishing '$($config.Publish.DisplayName.Value)' version $version with $PublishProfile (ModId: $modId)"
 & $dotnet publish $project "/p:PublishProfile=$PublishProfile" 2>&1 |
     Select-String -Pattern 'error|Mod published|publishing process|Could not publish|Auto logged in|Build FAILED' |
     ForEach-Object { $_.Line }
-exit $LASTEXITCODE
+$code = $LASTEXITCODE
+if ($code -ne 0) { exit $code }
+
+if ($uploadsCode) {
+    # Tag the published commit; pushing the tag makes GitHub Actions create the GitHub Release.
+    git -C $repo tag -a $tag -m "Better Cursor Light $version (published to Paradox Mods)"
+    git -C $repo push origin $tag
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Published, but pushing tag $tag failed. Run: git push origin $tag"
+    } else {
+        Write-Host "Tagged $tag and pushed it; GitHub Actions will create the release."
+    }
+}
+exit 0

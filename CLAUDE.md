@@ -48,10 +48,16 @@ always keep the credit to Dnikolas991 in the README and the mod description.
 - To recalibrate: temporarily log `exposure`, EV100 (`log2(1/(1.2·exposure))`), `dayLightBrightness` and the factor every ~10 s, have the user play through noon, dusk and night and say what looks too bright or too dim, then refit K and P. Remove the periodic log afterwards.
 - HDRP internals used via reflection, which a game update can break: `HDRenderPipeline.GetExposureTexture(HDCamera)` (non-public). Public HDRP API used: `HDAdditionalLightData.affectSpecular`.
 
+## CI and contributions
+
+- `tools/check.ps1` runs in GitHub Actions (`.github/workflows/checks.yml`) on every push and PR, and locally. It checks the publish config, image sizes, that every option has locale texts, and the Dnikolas991 credit. **Run it before committing.** Extend it when adding a new kind of invariant.
+- CI **cannot compile the mod** (that needs the game's DLLs and its Unity post-processor). Before merging a contributor PR, check it out, run `tools\build.ps1`, and have the user test it in game.
+- `CONTRIBUTING.md`, the PR template and the issue templates describe the contributor workflow; keep them in sync with these notes.
+
 ## Publishing
 
 - Only publish when the user asks; it uploads under their Paradox account. The user usually runs it themselves.
-- Update: bump `<ModVersion>`, write `<ChangeLog>`, then `powershell -File tools\publish.ps1` (defaults to `PublishNewVersion`). Description/images only: `-PublishProfile UpdatePublishedConfiguration`.
+- Update: bump `<ModVersion>`, write `<ChangeLog>`, **commit**, then `powershell -File tools\publish.ps1` (defaults to `PublishNewVersion`). It refuses uncommitted changes or an already-tagged version. After a successful upload it tags `vX.Y.Z` and pushes the tag, and `.github/workflows/release.yml` creates the GitHub Release from the ChangeLog. Description/images only: `-PublishProfile UpdatePublishedConfiguration` (no tag).
 - Paradox Mods **rejects any image over 2.1 MB**. `publish.ps1` checks this; save large screenshots as JPG.
 - `GameVersion` in the publish config should match the current game (`1.6.*` now).
 - Thumbnail: `tools/make-thumbnail.ps1` (needs `powershell.exe -STA`, uses WPF).
@@ -61,4 +67,4 @@ always keep the credit to Dnikolas991 in the README and the mod description.
 - `origin` = the user's fork `Yhanli/MouseLight` (push here); `upstream` = `Dnikolas991/MouseLight`.
 - This repo's `user.email` is the GitHub noreply address. GitHub rejects pushes that expose the private email, so don't change it.
 - `git push` from the agent shell can't prompt for credentials; run pushes in a terminal tab where Git Credential Manager is signed in.
-- Work goes on `main`; the user asks before each commit or push.
+- Work goes on `main`; the user asks before each commit or push. Contributors send PRs from their forks.

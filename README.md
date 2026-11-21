@@ -48,20 +48,26 @@ Requirements:
 - Cities: Skylines II with the **Mod Development Toolchain** installed (in game: Options → Modding).
 - .NET SDK (installed by the toolchain) and the .NET 6 runtime (used by the toolchain's post-processor).
 
-Build:
+Build (close the game first):
 
-```bash
-dotnet build BetterCursorLight/BetterCursorLight.csproj -c Release
+```powershell
+.\tools\build.ps1
 ```
 
-The build copies the mod into your local Mods folder (`%USERPROFILE%\AppData\LocalLow\Colossal Order\Cities Skylines II\Mods\BetterCursorLight`), and the game loads it on the next start. Close the game before building, or the copy fails because the old files are in use.
+The build copies the mod into your local Mods folder (`%USERPROFILE%\AppData\LocalLow\Colossal Order\Cities Skylines II\Mods\BetterCursorLight`), and the game loads it on the next start. The script refuses to run while the game is open, because the game locks the mod files.
 
-## Publishing
+## Contributing
 
-Publishing settings are in `BetterCursorLight/Properties/PublishConfiguration.xml`. Paradox Mods rejects any thumbnail or screenshot over 2.1 MB, so save large screenshots as JPG. Publish with the profiles in `Properties/PublishProfiles`:
+Pull requests are welcome. See **[CONTRIBUTING.md](CONTRIBUTING.md)** for setup (including the toolchain's Unity license step), testing and code guidelines. Every push and PR runs `tools/check.ps1` in GitHub Actions. It can't compile the mod, because that needs the game, so the maintainer builds and tests PRs in game before merging.
 
-- First release: `PublishNewMod`
-- Updates: `ModId` is already set (168458). Bump `ModVersion`, write a `ChangeLog`, then use `PublishNewVersion`.
+## Publishing (maintainer)
+
+Publishing settings are in `BetterCursorLight/Properties/PublishConfiguration.xml` (ModId 168458). Paradox Mods rejects any thumbnail or screenshot over 2.1 MB, so save large screenshots as JPG.
+
+1. Bump `ModVersion`, write a `ChangeLog`, and commit.
+2. Close the game and run `.\tools\publish.ps1`. It checks images and versions, uploads to Paradox Mods, then tags `vX.Y.Z`. Pushing that tag makes GitHub Actions create the GitHub Release.
+
+To update only the description or images: `.\tools\publish.ps1 -PublishProfile UpdatePublishedConfiguration`.
 
 ### Thumbnail
 

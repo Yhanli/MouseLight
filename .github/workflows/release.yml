@@ -1,0 +1,51 @@
+name: Release
+
+# Creates a GitHub Release when a version tag (v1.2.3) is pushed. tools/publish.ps1 pushes that tag
+# automatically after a successful upload to Paradox Mods.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Repository checks
+        shell: pwsh
+        run: ./tools/check.ps1
+
+      - name: Create release from the publish config
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          [xml]$config = Get-Content BetterCursorLight/Properties/PublishConfiguration.xml -Raw
+          $p = $config.Publish
+          $version = $p.ModVersion.Value
+          if ($env:TAG -ne "v$version") {
+            Write-Host "::error::Tag $env:TAG does not match ModVersion $version in PublishConfiguration.xml"
+            exit 1
+          }
+
+          # ChangeLog can be <ChangeLog Value="..."/> or <ChangeLog>text</ChangeLog>.
+          $changeLog = if ($p.ChangeLog -is [string]) { $p.ChangeLog } elseif ($p.ChangeLog.Value) { $p.ChangeLog.Value } else { $p.ChangeLog.InnerText }
+          $changeLog = ($changeLog -split "`n" | ForEach-Object { $_.Trim() }) -join "`n"
+          $modId = $p.ModId.Value
+          $notes = @"
+          $($changeLog.Trim())
+
+          **Install:** [Better Cursor Light on Paradox Mods](https://mods.paradoxplaza.com/mods/$modId/Windows), or search "Better Cursor Light" in the in-game Paradox Mods browser.
+
+          Recommended game version: $($p.GameVersion.Value)
+          "@
+
+          $notesFile = Join-Path $env:RUNNER_TEMP 'notes.md'
+          Set-Content $notesFile $notes -Encoding utf8
+          gh release create $env:TAG --title "Better Cursor Light $version" --notes-file $notesFile --verify-tag

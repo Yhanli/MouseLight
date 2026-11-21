@@ -1,0 +1,22 @@
+name: Checks
+
+# Runs on every push and pull request. The mod itself can't be compiled here (building needs the game's
+# own DLLs and its Unity post-processor), so this checks everything that can go wrong without the game.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Repository checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish config, image sizes, setting texts, credits
+        shell: pwsh
+        run: ./tools/check.ps1
