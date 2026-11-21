@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 
-namespace MouseLight
+namespace BetterCursorLight
 {
     internal sealed class CursorLightController
     {
-        //可调节参数的默认值在MouseLightSettings里面
+        //可调节参数的默认值在CursorLightSettings里面
         // 以下参数用于稳定不同镜头距离下的光斑尺寸和照度。
         private const float ReferenceFootprintRadius = 40f;
         private const float ReferenceLumens = 50000f;
@@ -34,7 +34,7 @@ namespace MouseLight
             try
             {
                 // 全程复用一个聚光灯，避免逐帧创建对象和产生残影。
-                m_LightObject = new GameObject("MouseLight.CursorSpotLight");
+                m_LightObject = new GameObject("BetterCursorLight.CursorSpotLight");
                 Object.DontDestroyOnLoad(m_LightObject);
                 m_Light = m_LightObject.AddComponent<Light>();
                 m_Light.type = LightType.Spot;
@@ -63,9 +63,11 @@ namespace MouseLight
         internal void Update(
             Vector3 targetPosition,
             Vector3 cameraPosition,
-            float nightFactor,
+            float brightnessFactor,
             float intensityMultiplier,
             float rangeMultiplier,
+            float lightDistance,
+            bool reflections,
             float red,
             float green,
             float blue)
@@ -75,7 +77,8 @@ namespace MouseLight
                 return;
             }
 
-            float factor = Mathf.Clamp01(nightFactor);
+            // 1 = full night brightness; above 1 = daytime boost; 0 = off.
+            float factor = Mathf.Max(0f, brightnessFactor);
             if (factor <= 0.001f)
             {
                 Hide();
@@ -90,7 +93,7 @@ namespace MouseLight
                 return;
             }
 
-            float baseIntensity = Mathf.Clamp(intensityMultiplier, 1f, 10f);
+            float baseIntensity = Mathf.Clamp(intensityMultiplier, 0.1f, 10f);
             float rangeScale = Mathf.Clamp(rangeMultiplier, 1f, 20f);
 
             // 先根据镜头距离计算目标光斑半径，系数 8 与范围倍率直接相乘。
@@ -100,8 +103,12 @@ namespace MouseLight
 
             // 90 度聚光灯的半角为 45 度，因此回退距离等于目标光斑半径。
             float halfAngleRadians = SpotAngle * 0.5f * Mathf.Deg2Rad;
-            float retreatDistance = footprintRadius / Mathf.Tan(halfAngleRadians);
-            float actualRange = retreatDistance + footprintRadius * RangeBeyondTargetFactor;
+            // The user's extra distance pulls the light further back. Brightness is NOT compensated for it,
+            // so the light spreads over a wider area and falls off naturally: softer and less concentrated.
+            float extraDistance = Mathf.Clamp(lightDistance, 0f, 500f);
+            float retreatDistance = footprintRadius / Mathf.Tan(halfAngleRadians) + extraDistance;
+            float litRadius = retreatDistance * Mathf.Tan(halfAngleRadians);
+            float actualRange = retreatDistance + litRadius * RangeBeyondTargetFactor;
 
             // 光源沿摄像机射线从命中点向摄像机回退，并始终照向命中点。
             Vector3 cameraDirection = cameraToTarget / Mathf.Max(1f, distance);
@@ -133,6 +140,11 @@ namespace MouseLight
             m_Light.color = lightColor;
             m_HdLight.color = lightColor;
             m_HdLight.SetRange(actualRange);
+            if (m_HdLight.affectSpecular != reflections)
+            {
+                // Specular off = no shiny highlights on glossy surfaces; diffuse lighting is unchanged.
+                m_HdLight.affectSpecular = reflections;
+            }
             m_HdLight.SetIntensity(hdrpIntensity, LightUnit.Lumen);
             m_Light.enabled = true;
         }

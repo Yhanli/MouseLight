@@ -10,7 +10,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace MouseLight
+namespace BetterCursorLight
 {
     internal partial class CursorGlowSystem : GameSystemBase
     {
@@ -28,7 +28,7 @@ namespace MouseLight
 
         protected override void OnUpdate()
         {
-            MouseLightSettings settings = Mod.Settings;
+            CursorLightSettings settings = Mod.Settings;
             GameManager manager = GameManager.instance;
             if (settings == null || !settings.EnableCursorLight || manager == null || manager.isGameLoading ||
                 (manager.gameMode & GameMode.GameOrEditor) == 0 || Mouse.current == null || !InputManager.instance.controlOverWorld)
@@ -55,15 +55,18 @@ namespace MouseLight
             NativeArray<RaycastResult> results = m_RaycastSystem.GetResult(this);
             if (results.IsCreated && results.Length > 0)
             {
+                Color tint = GetTemperatureTint(settings);
                 CursorLightController.Shared.Update(
                     results[0].m_Hit.m_HitPosition,
                     m_Camera.transform.position,
-                    GetNightFactor(),
+                    GetBrightnessFactor(settings),
                     settings.IntensityMultiplier,
                     settings.RangeMultiplier,
-                    settings.Red,
-                    settings.Green,
-                    settings.Blue);
+                    settings.LightDistance,
+                    settings.LightReflections,
+                    settings.ColorRed / 255f * tint.r,
+                    settings.ColorGreen / 255f * tint.g,
+                    settings.ColorBlue / 255f * tint.b);
             }
             else
             {
@@ -89,6 +92,40 @@ namespace MouseLight
                 m_Flags = RaycastFlags.SubElements | RaycastFlags.BuildingLots
             };
             m_RaycastSystem.AddInput(this, input);
+        }
+
+        // Scene exposure is very different by day and by night, so the same lumens look far brighter at night.
+        // These scales were tuned in game so one intensity setting looks about the same in both:
+        // intensity 2 looked right by day with the 2000 day scale, and ~0.35 looked right at night at the old
+        // night scale of 1, i.e. night needs 0.35 / 2 = 0.175.
+        private const float DayScale = 2000f;
+        private const float NightScale = 0.175f;
+
+        private float GetBrightnessFactor(CursorLightSettings settings)
+        {
+            float night = GetNightFactor();
+            if (!settings.EnableInDaytime)
+            {
+                // Night only: fade in at dusk, off in daylight.
+                return night * NightScale;
+            }
+
+            // Full daylight uses the day scale, full night the night scale, and dusk/dawn blend between them.
+            return math.lerp(DayScale, NightScale, night);
+        }
+
+        private static Color GetTemperatureTint(CursorLightSettings settings)
+        {
+            if (!settings.WarmTone)
+            {
+                return Color.white;
+            }
+
+            // Real light-bulb color for this temperature, scaled so its brightest channel is 1
+            // (the tint changes the hue only; brightness stays with the intensity setting).
+            Color c = Mathf.CorrelatedColorTemperatureToRGB(Mathf.Clamp(settings.ColorTemperature, 1500f, 6500f));
+            float max = Mathf.Max(c.r, Mathf.Max(c.g, c.b));
+            return max > 0.0001f ? new Color(c.r / max, c.g / max, c.b / max, 1f) : Color.white;
         }
 
         private float GetNightFactor()

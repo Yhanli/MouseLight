@@ -1,21 +1,63 @@
-# Mouse Light
+# Better Cursor Light
 
-> 通过鼠标光源为黑夜提供照明
->
-> Light up the night with a mouse-following light source.
->
+A Cities: Skylines II mod that puts a soft, adjustable light wherever your mouse points, so you can see what you are building at night and in the deep shadows of buildings during the day.
 
-## 模组介绍
-## Mod Overview
+## Features
 
-你是否觉得天际线2的夜晚过于黑暗？别担心，使用鼠标光源照亮前方的路
+- **Day and night**: the light also works in daylight, so places hidden in building shadows are easy to see. Brightness is balanced automatically, so one intensity setting looks about the same by day and by night, with a smooth blend at dusk and dawn.
+- **Light distance**: moves the light further back from the cursor, toward the camera, so it spreads over a wider area and looks softer.
+- **Warm tone**: tints the light with a real color temperature, from 1500 K (candle) to 6500 K (daylight white).
+- **RGB color** on the standard 0–255 scale.
+- **Light reflections** toggle: turn off the shiny highlights the light makes on roads, water and glass for a matte look.
+- **Intensity down to 0.1** for a subtle light.
+- Settings text in English, Chinese (Simplified) and German.
 
-Do you find the nights in Cities: Skylines II too dark? Mouse Light illuminates the area ahead wherever you point.
+## Settings
 
-在设置界面开启或关闭模组，可以调节光照强度倍率和范围倍率以及色调
+Open **Options → Better Cursor Light**.
 
-Enable or disable the mod in the settings menu; you can adjust the lighting intensity multiplier, range multiplier, and color tone.
+| Setting | Range | Default |
+|---|---|---|
+| Enable cursor light | on / off | on |
+| Also light up during the day | on / off | on |
+| Light intensity multiplier | 0.1 – 10 | 3 |
+| Range multiplier | 1 – 20 | 2 |
+| Light distance (m) | 0 – 500 | 50 |
+| Light reflections | on / off | off |
+| Red / Green / Blue | 0 – 255 | 255 |
+| Warm tone | on / off | on |
+| Color temperature (K) | 1500 – 6500 | 6000 |
 
-感谢一代模组EYM为模组实现提供的宝贵思路
+**Reset settings** restores all of these defaults.
 
-Special thanks to the original EYM mod for providing valuable inspiration for this mod.
+## Building from source
+
+Requirements:
+
+- Cities: Skylines II with the **Mod Development Toolchain** installed (in game: Options → Modding).
+- .NET SDK (installed by the toolchain) and the .NET 6 runtime (used by the toolchain's post-processor).
+
+Build:
+
+```bash
+dotnet build BetterCursorLight/BetterCursorLight.csproj -c Release
+```
+
+The build copies the mod into your local Mods folder (`%USERPROFILE%\AppData\LocalLow\Colossal Order\Cities Skylines II\Mods\BetterCursorLight`), and the game loads it on the next start. Close the game before building, or the copy fails because the old files are in use.
+
+## Publishing
+
+Publishing settings are in `BetterCursorLight/Properties/PublishConfiguration.xml`. Publish with the profiles in `Properties/PublishProfiles`:
+
+- First release: `PublishNewMod`
+- Updates: set `ModId` to the published mod's ID, bump `ModVersion`, then use `PublishNewVersion`.
+
+## How it works
+
+- `CursorGlowSystem` runs every frame. It raycasts from the mouse into the world (terrain, objects and networks), reads the game's daylight level, and works out the brightness for the current time of day.
+- `CursorLightController` keeps a single HDRP spotlight. It places the light back along the camera ray from the hit point, scales its size and brightness with camera distance, and smooths its movement.
+- `CursorLightSettings` and `CursorLightLocale` hold the options and their texts.
+
+## Credits
+
+Based on [Mouse Light](https://github.com/Dnikolas991/MouseLight) by Dnikolas991, which was itself inspired by the Cities: Skylines 1 mod EYM.

@@ -1,12 +1,12 @@
 using System;
 using Colossal.Logging;
 
-namespace MouseLight
+namespace BetterCursorLight
 {
     internal static class Logger
     {
         // 日志系统异常不能影响游戏模拟更新。
-        private static readonly ILog Log = LogManager.GetLogger(nameof(MouseLight)).SetShowsErrorsInUI(false);
+        private static readonly ILog Log = LogManager.GetLogger(nameof(BetterCursorLight)).SetShowsErrorsInUI(false);
 
         internal static void Info(string message) => SafeWrite(log => log.Info(message));
         internal static void Warn(string message) => SafeWrite(log => log.Warn(message));
