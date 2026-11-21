@@ -1,0 +1,11 @@
+# Store text with LF in the repo, check out with CRLF (Windows-only mod and toolchain).
+* text=auto eol=crlf
+
+# Binary assets: never touch line endings.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.dll binary
+*.pdb binary
+*.so binary
+*.bundle binary
