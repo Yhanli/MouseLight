@@ -2,6 +2,8 @@
 
 A Cities: Skylines II mod that puts a soft, adjustable light wherever your mouse points, so you can see what you are building at night and in the deep shadows of buildings during the day.
 
+**Get it on Paradox Mods: [Better Cursor Light](https://mods.paradoxplaza.com/mods/168458/Windows)**, or search "Better Cursor Light" in the in-game Paradox Mods browser.
+
 > **Based on [Mouse Light](https://github.com/Dnikolas991/MouseLight) by [Dnikolas991](https://github.com/Dnikolas991).** This project is a fork that extends the original with daytime lighting, softer light, warm tones and more settings. All credit for the original idea and the cursor light system goes to them.
 
 | Without the light | With the light |
@@ -59,7 +61,7 @@ The build copies the mod into your local Mods folder (`%USERPROFILE%\AppData\Loc
 Publishing settings are in `BetterCursorLight/Properties/PublishConfiguration.xml`. Paradox Mods rejects any thumbnail or screenshot over 2.1 MB, so save large screenshots as JPG. Publish with the profiles in `Properties/PublishProfiles`:
 
 - First release: `PublishNewMod`
-- Updates: set `ModId` to the published mod's ID, bump `ModVersion`, then use `PublishNewVersion`.
+- Updates: `ModId` is already set (168458). Bump `ModVersion`, write a `ChangeLog`, then use `PublishNewVersion`.
 
 ### Thumbnail
 
