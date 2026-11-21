@@ -31,6 +31,8 @@ This is an extended version of **Mouse Light** by **Dnikolas991** (https://githu
 	<!--Screenshot, can be set multiple times-->
 	<Screenshot Value="Properties/Screenshots/1-shadows-without-light.png" />
 	<Screenshot Value="Properties/Screenshots/2-shadows-with-light.png" />
+	<Screenshot Value="Properties/Screenshots/4-night-without-light.png" />
+	<Screenshot Value="Properties/Screenshots/5-night-with-light.png" />
 	<Screenshot Value="Properties/Screenshots/3-settings.png" />
 	<!--Tag, can be set multiple times-->
 	<Tag Value="Code Mod" />

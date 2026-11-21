@@ -7,6 +7,7 @@ A Cities: Skylines II mod that puts a soft, adjustable light wherever your mouse
 | Without the light | With the light |
 |---|---|
 | ![Building shadows without the cursor light](BetterCursorLight/Properties/Screenshots/1-shadows-without-light.png) | ![The same shadows lit by the cursor light](BetterCursorLight/Properties/Screenshots/2-shadows-with-light.png) |
+| ![A city at night without the cursor light](BetterCursorLight/Properties/Screenshots/4-night-without-light.png) | ![The same city at night lit by the cursor light](BetterCursorLight/Properties/Screenshots/5-night-with-light.png) |
 
 ## Features
 
