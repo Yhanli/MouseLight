@@ -61,6 +61,10 @@ Before opening a PR, run the checks that CI runs:
 1. Bump `<ModVersion>` and write `<ChangeLog>` in `BetterCursorLight/Properties/PublishConfiguration.xml`, then commit.
 2. Close the game and run `.\tools\publish.ps1`. It uploads to Paradox Mods, tags `vX.Y.Z` and pushes the tag. GitHub Actions then creates the GitHub Release.
 
+## License of your contribution
+
+By opening a pull request, you agree that your contribution is licensed under the [MIT License](LICENSE), the same as the rest of Better Cursor Light's own work (see [NOTICE.md](NOTICE.md)). Only submit work you wrote yourself or are allowed to share under MIT.
+
 ## Credit
 
 Better Cursor Light is based on [Mouse Light](https://github.com/Dnikolas991/MouseLight) by Dnikolas991. Keep that credit in the README and the mod description; CI checks for it.

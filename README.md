@@ -98,3 +98,9 @@ powershell.exe -STA -File tools\make-thumbnail.ps1 -Source BetterCursorLight\Pro
 - Light reflections toggle
 - Intensity down to 0.1
 - New defaults, and renamed so it can be installed alongside the original
+
+## License
+
+**Better Cursor Light's own work is [MIT licensed](LICENSE).** You're free to clone, modify, reuse and publish it, including in your own mods, as long as you keep the copyright notice and the license text.
+
+The original Mouse Light code by Dnikolas991 isn't covered by that license, because the original repo has none. It's used here with credit. If you reuse code from this repo, credit both Mouse Light and Better Cursor Light. **[NOTICE.md](NOTICE.md)** explains exactly what is covered.

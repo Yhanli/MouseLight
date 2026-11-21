@@ -4,6 +4,10 @@ Cities: Skylines II **code mod** (C#, Unity ECS + HDRP). A light follows the mou
 Published on Paradox Mods as **ModId 168458**. Fork of [Dnikolas991/MouseLight](https://github.com/Dnikolas991/MouseLight);
 always keep the credit to Dnikolas991 in the README and the mod description.
 
+**License:** our own work is MIT (`LICENSE`). The original Mouse Light code (upstream `4a67bd8`) has no license and
+is used with credit; `NOTICE.md` spells this out. Don't describe the whole repo as MIT-only, and update `NOTICE.md`
+if Dnikolas991 ever adds a license.
+
 ## Layout
 
 - `BetterCursorLight/` is the mod project (`BetterCursorLight.csproj`, net48, imports the toolchain's `Mod.props`/`Mod.targets` via `%CSII_TOOLPATH%`).

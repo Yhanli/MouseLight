@@ -20,3 +20,4 @@
 - [ ] New or changed options have texts in English, Chinese and German
 - [ ] No existing option property was renamed (that resets players' saved settings)
 - [ ] `ModVersion`, `ChangeLog` and `ModId` are unchanged (the maintainer sets them when releasing)
+- [ ] I wrote this myself (or may share it) and agree it's licensed under MIT (see `LICENSE` and `NOTICE.md`)
