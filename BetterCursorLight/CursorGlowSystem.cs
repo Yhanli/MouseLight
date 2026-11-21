@@ -17,6 +17,8 @@ namespace BetterCursorLight
         private RaycastSystem m_RaycastSystem;
         private LightingSystem m_LightingSystem;
         private Camera m_Camera;
+        private readonly ExposureProbe m_Exposure = new ExposureProbe();
+        private bool? m_LoggedLive;
 
         protected override void OnCreate()
         {
@@ -30,6 +32,15 @@ namespace BetterCursorLight
         {
             CursorLightSettings settings = Mod.Settings;
             GameManager manager = GameManager.instance;
+
+            // Keep the live exposure reading fresh even while the light is hidden (cursor over the UI, etc.),
+            // so there is no jump to the fallback estimate when the cursor returns. Async and very cheap.
+            m_Camera = m_Camera != null ? m_Camera : Camera.main;
+            if (settings != null && settings.EnableCursorLight && m_Camera != null && m_Camera.isActiveAndEnabled)
+            {
+                m_Exposure.Request(m_Camera);
+            }
+
             if (settings == null || !settings.EnableCursorLight || manager == null || manager.isGameLoading ||
                 (manager.gameMode & GameMode.GameOrEditor) == 0 || Mouse.current == null || !InputManager.instance.controlOverWorld)
             {
@@ -101,7 +112,56 @@ namespace BetterCursorLight
         private const float DayScale = 2000f;
         private const float NightScale = 0.175f;
 
+        // On-screen brightness of a light = lumens x camera exposure multiplier, so scaling by the inverse of the
+        // live exposure keeps the light consistent at any time of day, in any weather and at any zoom.
+        // A pure inverse made daytime look too bright, so the curve is softened: factor = K x exposure^-P.
+        // Fitted to in-game measurements (game 1.6.4):
+        //   night: exposure 0.833   (EV100 0)  -> 0.175  (looked right at night)
+        //   noon:  exposure 5.09e-5 (EV100 14) -> ~1500  (the 1966 of a pure inverse looked a little too bright)
+        private const float ExposureCurveK = 0.1476f;
+        private const float ExposureCurveP = 0.933f;
+        private const float MinFactor = 0.01f;
+        private const float MaxFactor = 50000f;
+
         private float GetBrightnessFactor(CursorLightSettings settings)
+        {
+            float factor;
+            bool live = m_Exposure.TryGet(out float exposure);
+            if (live)
+            {
+                factor = math.clamp(ExposureCurveK * math.pow(exposure, -ExposureCurveP), MinFactor, MaxFactor);
+                if (!settings.EnableInDaytime)
+                {
+                    // Night only: fade out as the sun comes up.
+                    factor *= GetNightFactor();
+                }
+            }
+            else
+            {
+                factor = GetEstimatedBrightnessFactor(settings);
+            }
+
+            LogSourceChange(live, exposure, factor);
+            return factor;
+        }
+
+        // Logs only when switching between the live exposure and the fallback estimate (useful after game updates).
+        private void LogSourceChange(bool live, float exposure, float factor)
+        {
+            if (m_LoggedLive.HasValue && m_LoggedLive.Value == live)
+            {
+                return;
+            }
+
+            m_LoggedLive = live;
+            float ev100 = exposure > 0f ? math.log2(1f / (1.2f * exposure)) : float.NaN;
+            Logger.Info(live
+                ? $"Brightness follows live camera exposure (EV100={ev100:F2}, factor={factor:G4})."
+                : $"Live camera exposure unavailable; using the time-of-day estimate (factor={factor:G4}).");
+        }
+
+        // Fallback when the live exposure cannot be read: estimate from the time of day.
+        private float GetEstimatedBrightnessFactor(CursorLightSettings settings)
         {
             float night = GetNightFactor();
             if (!settings.EnableInDaytime)

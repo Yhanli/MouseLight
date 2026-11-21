@@ -62,7 +62,8 @@ Publishing settings are in `BetterCursorLight/Properties/PublishConfiguration.xm
 
 ## How it works
 
-- `CursorGlowSystem` runs every frame. It raycasts from the mouse into the world (terrain, objects and networks), reads the game's daylight level, and works out the brightness for the current time of day.
+- `CursorGlowSystem` runs every frame. It raycasts from the mouse into the world (terrain, objects and networks) and works out how bright the light should be.
+- `ExposureProbe` reads the camera's live HDRP exposure (asynchronously, from the GPU). The light's brightness is scaled against it with a curve fitted to in-game measurements, so it looks consistent at noon, at dusk, at night, in any weather and at any zoom. If the exposure can't be read (for example after a game update), it falls back to an estimate based on the time of day.
 - `CursorLightController` keeps a single HDRP spotlight. It places the light back along the camera ray from the hit point, scales its size and brightness with camera distance, and smooths its movement.
 - `CursorLightSettings` and `CursorLightLocale` hold the options and their texts.
 
@@ -73,7 +74,7 @@ Publishing settings are in `BetterCursorLight/Properties/PublishConfiguration.xm
 
 ### Changes from Mouse Light
 
-- Daytime lighting with automatic day/night brightness balance (logarithmic blend at dusk and dawn)
+- Daytime lighting, with brightness that follows the camera's live exposure so it stays consistent day and night
 - Light distance setting for a softer, wider light
 - Warm tone (color temperature) setting
 - RGB on a 0–255 scale
