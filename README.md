@@ -7,7 +7,7 @@ A Cities: Skylines II mod that puts a soft, adjustable light wherever your mouse
 | Without the light | With the light |
 |---|---|
 | ![Building shadows without the cursor light](BetterCursorLight/Properties/Screenshots/1-shadows-without-light.png) | ![The same shadows lit by the cursor light](BetterCursorLight/Properties/Screenshots/2-shadows-with-light.png) |
-| ![A city at night without the cursor light](BetterCursorLight/Properties/Screenshots/4-night-without-light.png) | ![The same city at night lit by the cursor light](BetterCursorLight/Properties/Screenshots/5-night-with-light.png) |
+| ![A city at night without the cursor light](BetterCursorLight/Properties/Screenshots/4-night-without-light.jpg) | ![The same city at night lit by the cursor light](BetterCursorLight/Properties/Screenshots/5-night-with-light.jpg) |
 
 ## Features
 
@@ -56,7 +56,7 @@ The build copies the mod into your local Mods folder (`%USERPROFILE%\AppData\Loc
 
 ## Publishing
 
-Publishing settings are in `BetterCursorLight/Properties/PublishConfiguration.xml`. Publish with the profiles in `Properties/PublishProfiles`:
+Publishing settings are in `BetterCursorLight/Properties/PublishConfiguration.xml`. Paradox Mods rejects any thumbnail or screenshot over 2.1 MB, so save large screenshots as JPG. Publish with the profiles in `Properties/PublishProfiles`:
 
 - First release: `PublishNewMod`
 - Updates: set `ModId` to the published mod's ID, bump `ModVersion`, then use `PublishNewVersion`.
@@ -66,7 +66,7 @@ Publishing settings are in `BetterCursorLight/Properties/PublishConfiguration.xm
 `BetterCursorLight/Properties/Thumbnail.png` is generated from a screenshot by `tools/make-thumbnail.ps1` (Windows, uses WPF):
 
 ```powershell
-powershell.exe -STA -File tools\make-thumbnail.ps1 -Source BetterCursorLight\Properties\Screenshots\4-night-without-light.png -Out BetterCursorLight\Properties\Thumbnail.png
+powershell.exe -STA -File tools\make-thumbnail.ps1 -Source BetterCursorLight\Properties\Screenshots\4-night-without-light.jpg -Out BetterCursorLight\Properties\Thumbnail.png
 ```
 
 ## How it works
