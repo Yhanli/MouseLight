@@ -9,6 +9,8 @@
 	<LongDescription>
 **Better Cursor Light** puts a soft light wherever your mouse points, so you can see what you are building at night and in the deep shadows of buildings during the day.
 
+This is an extended version of **Mouse Light** by **Dnikolas991** (https://github.com/Dnikolas991/MouseLight). All credit for the original idea and the cursor light system goes to them.
+
 **Features**
 - Works day and night. Brightness is balanced automatically, so one intensity setting looks right in both.
 - Light distance: move the light further from the cursor for a softer, wider, less concentrated glow.
@@ -20,12 +22,16 @@
 
 **Settings**: Options > Better Cursor Light. Use "Reset settings" to restore the defaults.
 
-**Credits**: Based on Mouse Light by Dnikolas991, which was itself inspired by the Cities: Skylines 1 mod EYM.
+**Credits**
+- Original mod: Mouse Light by Dnikolas991 - https://github.com/Dnikolas991/MouseLight
+- Mouse Light was inspired by the Cities: Skylines 1 mod EYM.
 	</LongDescription>
 	<!--Thumbnail-->
 	<Thumbnail Value="Properties/Thumbnail.png" />
 	<!--Screenshot, can be set multiple times-->
-	<Screenshot Value="" />
+	<Screenshot Value="Properties/Screenshots/1-shadows-without-light.png" />
+	<Screenshot Value="Properties/Screenshots/2-shadows-with-light.png" />
+	<Screenshot Value="Properties/Screenshots/3-settings.png" />
 	<!--Tag, can be set multiple times-->
 	<Tag Value="Code Mod" />
 	<!--Link to the forum post where the mod can be discussed-->

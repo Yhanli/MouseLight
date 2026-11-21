@@ -111,7 +111,18 @@ namespace BetterCursorLight
             }
 
             // Full daylight uses the day scale, full night the night scale, and dusk/dawn blend between them.
-            return math.lerp(DayScale, NightScale, night);
+            // The blend is logarithmic (equal ratios per step), matching how scene exposure changes. A linear
+            // blend between 2000 and 0.175 stays hundreds of times too bright until it is almost fully dark.
+            float t = GetDaylightBlend();
+            return math.exp(math.lerp(math.log(NightScale), math.log(DayScale), t));
+        }
+
+        // 0 = full night, 1 = full day, smooth in between. Wider than the night-only fade so the light
+        // starts dimming earlier in the late afternoon and brightens more gradually in the morning.
+        private float GetDaylightBlend()
+        {
+            float daylight = math.saturate(m_LightingSystem.dayLightBrightness);
+            return math.smoothstep(0.05f, 0.6f, daylight);
         }
 
         private static Color GetTemperatureTint(CursorLightSettings settings)

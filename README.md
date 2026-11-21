@@ -2,6 +2,12 @@
 
 A Cities: Skylines II mod that puts a soft, adjustable light wherever your mouse points, so you can see what you are building at night and in the deep shadows of buildings during the day.
 
+> **Based on [Mouse Light](https://github.com/Dnikolas991/MouseLight) by [Dnikolas991](https://github.com/Dnikolas991).** This project is a fork that extends the original with daytime lighting, softer light, warm tones and more settings. All credit for the original idea and the cursor light system goes to them.
+
+| Without the light | With the light |
+|---|---|
+| ![Building shadows without the cursor light](BetterCursorLight/Properties/Screenshots/1-shadows-without-light.png) | ![The same shadows lit by the cursor light](BetterCursorLight/Properties/Screenshots/2-shadows-with-light.png) |
+
 ## Features
 
 - **Day and night**: the light also works in daylight, so places hidden in building shadows are easy to see. Brightness is balanced automatically, so one intensity setting looks about the same by day and by night, with a smooth blend at dusk and dawn.
@@ -15,6 +21,8 @@ A Cities: Skylines II mod that puts a soft, adjustable light wherever your mouse
 ## Settings
 
 Open **Options → Better Cursor Light**.
+
+![Better Cursor Light settings](BetterCursorLight/Properties/Screenshots/3-settings.png)
 
 | Setting | Range | Default |
 |---|---|---|
@@ -60,4 +68,15 @@ Publishing settings are in `BetterCursorLight/Properties/PublishConfiguration.xm
 
 ## Credits
 
-Based on [Mouse Light](https://github.com/Dnikolas991/MouseLight) by Dnikolas991, which was itself inspired by the Cities: Skylines 1 mod EYM.
+- **Original mod:** [Mouse Light](https://github.com/Dnikolas991/MouseLight) by [Dnikolas991](https://github.com/Dnikolas991). Better Cursor Light keeps its core design: an independent mouse raycast, a single smoothed HDRP spotlight, and camera-distance scaling.
+- Mouse Light was itself inspired by the Cities: Skylines 1 mod EYM.
+
+### Changes from Mouse Light
+
+- Daytime lighting with automatic day/night brightness balance (logarithmic blend at dusk and dawn)
+- Light distance setting for a softer, wider light
+- Warm tone (color temperature) setting
+- RGB on a 0–255 scale
+- Light reflections toggle
+- Intensity down to 0.1
+- New defaults, and renamed so it can be installed alongside the original
