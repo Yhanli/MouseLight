@@ -61,6 +61,14 @@ Publishing settings are in `BetterCursorLight/Properties/PublishConfiguration.xm
 - First release: `PublishNewMod`
 - Updates: set `ModId` to the published mod's ID, bump `ModVersion`, then use `PublishNewVersion`.
 
+### Thumbnail
+
+`BetterCursorLight/Properties/Thumbnail.png` is generated from a screenshot by `tools/make-thumbnail.ps1` (Windows, uses WPF):
+
+```powershell
+powershell.exe -STA -File tools\make-thumbnail.ps1 -Source BetterCursorLight\Properties\Screenshots\4-night-without-light.png -Out BetterCursorLight\Properties\Thumbnail.png
+```
+
 ## How it works
 
 - `CursorGlowSystem` runs every frame. It raycasts from the mouse into the world (terrain, objects and networks) and works out how bright the light should be.
